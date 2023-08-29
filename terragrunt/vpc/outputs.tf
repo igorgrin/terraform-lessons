@@ -24,6 +24,6 @@ output "public_subnets" {
 }
 
 # Security groups
-output "http_public" {
+output "sg_http_public" {
   value = aws_security_group.http_public.id
 }
