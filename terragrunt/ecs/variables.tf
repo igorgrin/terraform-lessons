@@ -12,3 +12,6 @@ variable "sg_http_public" {}
 variable "container_port" {
   type = number
 }
+variable "cluster_name" {}
+variable "service_name" {}
+variable "task_name" {}

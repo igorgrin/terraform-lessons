@@ -2,7 +2,7 @@ module "ecs_service" {
   source  = "terraform-aws-modules/ecs/aws"
   version = "~> 4.1.3"
 
-  name            = "my-ecs-service"
+  name            = var.service_name
   cluster         = module.ecs.cluster_id
   task_definition = aws_ecs_task_definition.my_task.arn
   launch_type     = "FARGATE"
