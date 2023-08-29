@@ -1,2 +1,3 @@
 # Terragrunt example
-The following code will create the initial VPC in AWS using a module using terragrunt utility.
+   \- Why use Terragrunt instead of Terraform?
+   \- Terragrunt is a thin wrapper around Terraform wich allows to manage state files better, and cross-reference Terraform resources.
