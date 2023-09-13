@@ -14,4 +14,5 @@ variable "container_port" {
 }
 variable "cluster_name" {}
 variable "service_name" {}
+variable "service_scaled" {}
 variable "task_name" {}
