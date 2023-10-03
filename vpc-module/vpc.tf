@@ -2,18 +2,26 @@ module "vpc" {
   # Pull public module
   source = "git@github.com:terraform-aws-modules/terraform-aws-vpc.git"
 
-  name = "MyVPC"
+  name = "tf-lessons-vpc"
   # Specify IP range
-  cidr = "10.0.0.0/8"
+  cidr = "10.0.0.0/16"
 
   # Create 3 availability zones
-  azs             = ["us-west-2a", "us-west-2b", "us-west-2c"]
-  public_subnets  = "10.1.0.0/16"
-  private_subnets = "10.2.0.0/16"
+  azs = ["us-west-2a", "us-west-2b", "us-west-2c"]
+  public_subnets = [
+    "10.0.0.0/19",
+    "10.0.32.0/19",
+    "10.0.64.0/19",
+  ]
+  private_subnets = [
+    "10.0.96.0/19",
+    "10.0.128.0/19",
+    "10.0.160.0/19",
+  ]
 
   # DHCP settings
   enable_dhcp_options      = true
-  dhcp_options_domain_name = "test.krolm.com"
+  dhcp_options_domain_name = "krolm.com"
   enable_dns_hostnames     = true
   enable_dns_support       = true
 
@@ -23,10 +31,10 @@ module "vpc" {
 }
 
 # Outputs are needed for cross-referencing terraform resources
-output "public_subnet_ids" {
-  value = module.vpc.public_subnet_ids
+output "public_subnets" {
+  value = module.vpc.public_subnets
 }
 
-output "private_subnet_ids" {
-  value = module.vpc.private_subnet_ids
+output "private_subnets" {
+  value = module.vpc.private_subnets
 }
