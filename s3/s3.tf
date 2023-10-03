@@ -2,6 +2,16 @@ provider "aws" {
   region = "us-west-2" # Specify your desired AWS region
 }
 
+terraform {
+  backend "s3" {
+    bucket  = "terraform-lessons-state"
+    key     = "s3/terraform.state"
+    region  = "us-west-2" # Replace with the desired region
+    encrypt = true        # Enable server-side encryption
+    # dynamodb_table = "terraform-lock" # Optional: Use a DynamoDB table for state locking
+  }
+}
+
 # Create the initial terraform-lessons-state S3 bucket
 resource "aws_s3_bucket" "state_bucket" {
   bucket = "terraform-lessons-state" # Bucket for keeping the TF State file
