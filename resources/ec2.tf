@@ -18,6 +18,15 @@ module "ec2_instance" {
   }
 }
 
+# DNS name external
+resource "aws_route53_record" "ec2_instance_external" {
+  zone_id = aws_route53_zone.main.id
+  name    = "test"
+  type    = "A"
+  ttl     = 300
+  records = [module.ec2_instance.public_ip]
+}
+
 output "public_dns" {
   value = module.ec2_instance.public_dns
 }
