@@ -1,4 +1,4 @@
-vpc_name     = "test-vpc"
+vpc_name   = "test-vpc"
 vpc_subnet = "10.1.0.0/16"
 
 private_subnets = [

@@ -1,1 +1,1 @@
-dns_main  = "test.domain.com"
+dns_main = "test.domain.com"

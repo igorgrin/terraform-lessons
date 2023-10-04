@@ -1,3 +1,5 @@
+data "aws_availability_zones" "available" {}
+
 module "vpc" {
   # Pull public module
   source = "git@github.com:terraform-aws-modules/terraform-aws-vpc.git"
@@ -7,7 +9,10 @@ module "vpc" {
   cidr = "10.0.0.0/16"
 
   # Create 3 availability zones
-  azs = ["us-west-2a", "us-west-2b", "us-west-2c"]
+
+  # azs = ["us-west-2a", "us-west-2b", "us-west-2c"]
+  azs = slice(data.aws_availability_zones.available.names, 0, 3)
+
   public_subnets = [
     "10.0.0.0/19",
     "10.0.32.0/19",

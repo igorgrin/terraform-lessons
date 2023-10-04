@@ -6,7 +6,7 @@ module "ecs_service" {
   cluster         = module.ecs.cluster_id
   task_definition = aws_ecs_task_definition.my_task.arn
   launch_type     = "FARGATE"
-  subnet_ids     = var.private_subnets
+  subnet_ids      = var.private_subnets
 
   capacity_provider_strategy = {
     capacity_provider = "FARGATE"
@@ -17,7 +17,7 @@ module "ecs_service" {
     type = "ECS"
   }
 
-  desired_count           = 2  # Run two tasks
+  desired_count           = 2 # Run two tasks
   depends_on              = [module.ecs]
   enable_ecs_managed_tags = true
 }

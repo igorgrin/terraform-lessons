@@ -18,7 +18,7 @@ module "ecs_service_scaled" {
     type = "ECS"
   }
 
-  desired_count           = 2  # Run two tasks
+  desired_count           = 2 # Run two tasks
   depends_on              = [module.ecs]
   enable_ecs_managed_tags = true
 }
