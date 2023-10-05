@@ -11,25 +11,11 @@ module "ec2_instance" {
   ]
   subnet_id                   = data.terraform_remote_state.vpc_module.outputs.public_subnets[0]
   associate_public_ip_address = true
+  user_data                   = var.user_data
 
   tags = {
     Name        = "test"
     Environment = "dev"
-  }
-}
-
-resource "aws_volume_attachment" "this" {
-  device_name = "/dev/sdh"
-  volume_id   = aws_ebs_volume.this.id
-  instance_id = module.ec2_instance.id
-}
-
-resource "aws_ebs_volume" "this" {
-  availability_zone = module.ec2_instance.availability_zone
-  size              = 1
-
-  tags = {
-    Name = "test"
   }
 }
 
