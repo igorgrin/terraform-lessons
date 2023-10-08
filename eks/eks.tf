@@ -26,6 +26,17 @@ module "eks" {
     }
   }
 
+  node_security_group_additional_rules = {
+    ingress_allow_access_from_control_plane = {
+      type                          = "ingress"
+      protocol                      = "tcp"
+      from_port                     = 80
+      to_port                       = 80
+      source_cluster_security_group = true
+      description                   = "Access to port 80"
+    }
+  }
+
   tags = {
     Name        = "krolm-eks-cluster"
     Environment = "dev"

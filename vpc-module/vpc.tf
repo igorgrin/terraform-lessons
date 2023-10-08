@@ -24,6 +24,13 @@ module "vpc" {
     "10.0.160.0/19",
   ]
 
+  public_subnet_tags = {
+    "kubernetes.io/role/elb" = "1"
+  }
+  private_subnet_tags = {
+    "kubernetes.io/role/internal-elb" = "1"
+  }
+
   # DHCP settings
   enable_dhcp_options      = true
   dhcp_options_domain_name = "krolm.com"
