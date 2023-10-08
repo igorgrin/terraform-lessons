@@ -4,8 +4,27 @@ module "eks" {
   cluster_name    = "krolm-eks-cluster"
   cluster_version = "1.28"
 
+  cluster_endpoint_private_access = true
+  cluster_endpoint_public_access  = true
+
   vpc_id     = data.terraform_remote_state.vpc_module.outputs.vpc_id
-  subnet_ids = data.terraform_remote_state.vpc_module.outputs.public_subnets
+  subnet_ids = data.terraform_remote_state.vpc_module.outputs.private_subnets
+
+  eks_managed_node_groups = {
+    general = {
+      desired_size = 1
+      min_size     = 1
+      max_size     = 3
+
+      labels = {
+        role = "general"
+      }
+
+      instance_types = ["t2.micro"]
+      capacity_type  = "ON_DEMAND"
+
+    }
+  }
 
   tags = {
     Name        = "krolm-eks-cluster"
@@ -14,31 +33,31 @@ module "eks" {
 }
 
 ## Configure kubectl to access the cluster
-#data "aws_eks_cluster" "eks_cluster" {
-#  name = module.eks.cluster_name
-#}
-#
-#provider "kubernetes" {
-#  host                   = data.aws_eks_cluster.eks_cluster.endpoint
-#  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks_cluster.certificate_authority.0.data)
-#  token                  = module.eks.cluster_token
-#  load_config_file       = false
-#  #version                = "~> 1.16"
-#}
-#
-## Output EKS cluster details
-#output "eks_cluster_name" {
-#  value = module.eks.cluster_name
-#}
-#
-#output "eks_cluster_endpoint" {
-#  value = data.aws_eks_cluster.eks_cluster.endpoint
-#}
-#
-#output "eks_cluster_security_group_ids" {
-#  value = module.eks.cluster_security_group_ids
-#}
-#
-#output "eks_cluster_subnet_ids" {
-#  value = aws_subnet.eks_subnets[*].id
-#}
+data "aws_eks_cluster" "eks_cluster" {
+  name = module.eks.cluster_name
+}
+
+data "aws_eks_cluster_auth" "eks_cluster" {
+  name = module.eks.cluster_name
+}
+
+provider "kubernetes" {
+  host                   = data.aws_eks_cluster.eks_cluster.endpoint
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks_cluster.certificate_authority.0.data)
+  #  token                  = module.eks.cluster_token
+
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    args        = ["eks", "get-token", "--cluster-name", data.aws_eks_cluster.eks_cluster.id]
+    command     = "aws"
+  }
+}
+
+# Output EKS cluster details
+output "eks_cluster_name" {
+  value = module.eks.cluster_name
+}
+
+output "eks_cluster_endpoint" {
+  value = data.aws_eks_cluster.eks_cluster.endpoint
+}
