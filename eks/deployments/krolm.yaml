@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: krolm-site
+spec:
+  selector:
+    matchLabels:
+      app: krolm-site
+  replicas: 1 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: krolm-site
+    spec:
+      containers:
+      - name: krolm-repo
+        image: 394357065274.dkr.ecr.us-west-2.amazonaws.com/krolm-repo:latest
+        ports:
+        - containerPort: 80
