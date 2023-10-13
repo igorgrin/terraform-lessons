@@ -10,6 +10,8 @@ module "eks" {
   vpc_id     = data.terraform_remote_state.vpc_module.outputs.vpc_id
   subnet_ids = data.terraform_remote_state.vpc_module.outputs.private_subnets
 
+  enable_irsa = true
+
   eks_managed_node_groups = {
     general = {
       desired_size = 1
@@ -25,6 +27,8 @@ module "eks" {
 
     }
   }
+
+  manage_aws_auth_configmap = true
 
   node_security_group_additional_rules = {
     ingress_allow_access_from_control_plane = {
@@ -43,23 +47,22 @@ module "eks" {
   }
 }
 
-## Configure kubectl to access the cluster
-data "aws_eks_cluster" "eks_cluster" {
+data "aws_eks_cluster" "default" {
   name = module.eks.cluster_name
 }
 
-data "aws_eks_cluster_auth" "eks_cluster" {
+data "aws_eks_cluster_auth" "default" {
   name = module.eks.cluster_name
 }
 
 provider "kubernetes" {
-  host                   = data.aws_eks_cluster.eks_cluster.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks_cluster.certificate_authority.0.data)
-  #  token                  = module.eks.cluster_token
+  host                   = data.aws_eks_cluster.default.endpoint
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.default.certificate_authority[0].data)
+  # token                  = data.aws_eks_cluster_auth.default.token
 
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
-    args        = ["eks", "get-token", "--cluster-name", data.aws_eks_cluster.eks_cluster.id]
+    args        = ["eks", "get-token", "--cluster-name", data.aws_eks_cluster.default.id]
     command     = "aws"
   }
 }
@@ -70,5 +73,9 @@ output "eks_cluster_name" {
 }
 
 output "eks_cluster_endpoint" {
-  value = data.aws_eks_cluster.eks_cluster.endpoint
+  value = module.eks.cluster_endpoint
+}
+
+output "eks_oidc_provider_arn" {
+  value = module.eks.oidc_provider_arn
 }

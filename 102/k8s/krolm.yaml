@@ -1,0 +1,42 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: krolm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: krolm
+  template:
+    metadata:
+      labels:
+        app: krolm
+    spec:
+      containers:
+      - name: krolm-repo
+        image: 394357065274.dkr.ecr.us-west-2.amazonaws.com/krolm-repo:latest
+        ports:
+        - name: web
+          containerPort: 80
+        resources:
+          requests:
+            memory: 256Mi
+            cpu: 250m
+          limits:
+            memory: 256Mi
+            cpu: 250m
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: role
+                operator: In
+                values:
+                - general
+      # tolerations:
+      # - key: team
+      #   operator: Equal
+      #   value: devops
+      #   effect: NoSchedule
